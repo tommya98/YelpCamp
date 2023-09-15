@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import mongoose from 'mongoose';
+import ejsMate from 'ejs-mate';
 import methodOverride from 'method-override';
 import Campground from './models/campground.js';
 
@@ -17,6 +18,7 @@ db.once('open', () => {
 
 const app = express();
 
+app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 const __dirname = path.resolve();
 app.set('views', path.join(__dirname, 'views'));
