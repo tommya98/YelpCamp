@@ -7,6 +7,7 @@ import catchAsync from './utils/catchAsync.js';
 import ExpressError from './utils/ExpressError.js';
 import methodOverride from 'method-override';
 import Campground from './models/campground.js';
+import Review from './models/review.js';
 
 mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp', {
   useNewUrlParser: true,
@@ -96,6 +97,18 @@ app.delete(
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
     res.redirect('/campgrounds');
+  }),
+);
+
+app.post(
+  '/campgrounds/:id/reviews',
+  catchAsync(async (req, res) => {
+    const campground = await Campground.findById(req.params.id);
+    const review = new Review(req.body.review);
+    campground.reviews.push(review);
+    await review.save();
+    await campground.save();
+    res.redirect(`/campgrounds/${campground._id}`);
   }),
 );
 
