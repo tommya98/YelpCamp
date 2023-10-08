@@ -4,7 +4,7 @@ import passportLocalMongoose from 'passport-local-mongoose';
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-  emial: {
+  email: {
     type: String,
     requried: true,
     unique: true,
