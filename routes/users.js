@@ -1,4 +1,5 @@
 import express from 'express';
+import passport from 'passport';
 import User from '../models/user.js';
 import catchAsync from '../utils/catchAsync.js';
 
@@ -23,5 +24,14 @@ router.post(
     }
   }),
 );
+
+router.get('/login', (req, res) => {
+  res.render('users/login');
+});
+
+router.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: 'login' }), (req, res) => {
+  req.flash('success', 'welcom back!');
+  res.redirect('/campgrounds');
+});
 
 export default router;
