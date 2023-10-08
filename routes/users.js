@@ -2,6 +2,7 @@ import express from 'express';
 import passport from 'passport';
 import User from '../models/user.js';
 import catchAsync from '../utils/catchAsync.js';
+import { storeReturnTo } from '../middleware.js';
 
 const router = express.Router();
 
@@ -32,10 +33,16 @@ router.get('/login', (req, res) => {
   res.render('users/login');
 });
 
-router.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: 'login' }), (req, res) => {
-  req.flash('success', 'welcom back!');
-  res.redirect('/campgrounds');
-});
+router.post(
+  '/login',
+  storeReturnTo,
+  passport.authenticate('local', { failureFlash: true, failureRedirect: 'login' }),
+  (req, res) => {
+    req.flash('success', 'Welcom back!');
+    const redirectURL = res.locals.returnTo || '/campgrounds';
+    res.redirect(redirectURL);
+  },
+);
 
 router.get('/logout', (req, res, next) => {
   req.logout(function (err) {
