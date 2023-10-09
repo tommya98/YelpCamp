@@ -4,15 +4,15 @@ import mongoose from 'mongoose';
 import ejsMate from 'ejs-mate';
 import session from 'express-session';
 import flash from 'connect-flash';
-import ExpressError from './utils/ExpressError.js';
 import methodOverride from 'method-override';
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
-import User from './models/user.js';
 
+import ExpressError from './utils/ExpressError.js';
 import userRoutes from './routes/users.js';
 import campgroundsRoutes from './routes/campgrounds.js';
 import reviewsRoutes from './routes/reviews.js';
+import User from './models/user.js';
 
 mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp', {
   useNewUrlParser: true,
