@@ -1,14 +1,17 @@
 import express from 'express';
+import multer from 'multer';
 import catchAsync from '../utils/catchAsync.js';
 import { isLoggedIn, validateCampground, isAuthor } from '../middleware.js';
 import * as campgrounds from '../controllers/campgrounds.js';
+import { storage } from '../cloudinary/index.js';
 
 const router = express.Router();
+const upload = multer({ storage });
 
 router
   .route('/')
   .get(catchAsync(campgrounds.index))
-  .post(isLoggedIn, validateCampground, catchAsync(campgrounds.createCampground));
+  .post(isLoggedIn, upload.array('image'), validateCampground, catchAsync(campgrounds.createCampground));
 
 router.get('/new', isLoggedIn, campgrounds.renderNewForm);
 
