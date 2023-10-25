@@ -8,6 +8,7 @@ import path from 'path';
 import mongoose from 'mongoose';
 import ejsMate from 'ejs-mate';
 import session from 'express-session';
+import MongoStore from 'connect-mongo';
 import flash from 'connect-flash';
 import methodOverride from 'method-override';
 import passport from 'passport';
@@ -21,7 +22,8 @@ import campgroundsRoutes from './routes/campgrounds.js';
 import reviewsRoutes from './routes/reviews.js';
 import User from './models/user.js';
 
-mongoose.connect('mongodb://127.0.0.1:27017/yelp-camp', {
+const dbUrl = process.env.DB_URL || 'mongodb://127.0.0.1:27017/yelp-camp';
+mongoose.connect(dbUrl, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -48,9 +50,24 @@ app.use(
   }),
 );
 
+const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
+
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  touchAfter: 24 * 60 * 60,
+  crypto: {
+    secret,
+  },
+});
+
+store.on('error', function (e) {
+  console.log('SESSION STORE ERROR', e);
+});
+
 const sessionConfig = {
+  store,
   name: 'session',
-  secret: 'thisshouldbeabettersecret!',
+  secret,
   resave: false,
   saveUninitialized: true,
   cookie: {
